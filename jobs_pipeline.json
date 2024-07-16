@@ -1,0 +1,235 @@
+{
+    "name": "jobs_pipeline",
+    "objectId": "2319-sd3-47aa-9741-12945672", #personal data scrubbed
+    "properties": {
+        "activities": [
+            {
+                "name": "ForEach_job_titles",
+                "type": "ForEach",
+                "dependsOn": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@variables('job_titles')",
+                        "type": "Expression"
+                    },
+                    "isSequential": true,
+                    "activities": [
+                        {
+                            "name": "get_no_of_pages",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "source": {
+                                    "type": "RestSource",
+                                    "httpRequestTimeout": "00:01:40",
+                                    "requestInterval": "00.00:00:00.010",
+                                    "requestMethod": "GET",
+                                    "additionalHeaders": {
+                                        "appid": "109",
+                                        "systemid": "109",
+                                        "clientid": "d3skt0p",
+                                        "accept": "application/json",
+                                        "accept-encoding": "gzip, deflate, br",
+                                        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"
+                                    },
+                                    "paginationRules": {
+                                        "supportRFC5988": "true"
+                                    },
+                                    "datasetSettings": {
+                                        "annotations": [],
+                                        "type": "RestResource",
+                                        "typeProperties": {
+                                            "relativeUrl": {
+                                                "value": "@concat('https://www.naukri.com/jobapi/v3/search?noOfResults=20&urlType=search_by_key_loc&searchType=adv&location=india&keyword=',item(),'&sort=r&jobAge=1&src=cluster')",
+                                                "type": "Expression"
+                                            }
+                                        },
+                                        "schema": [],
+                                        "externalReferences": {
+                                            "connection": "324fowefd8-053e-4c0d-99c3-dsa893egdc" #personal data scrubbed
+                                        }
+                                    }
+                                },
+                                "sink": {
+                                    "type": "JsonSink",
+                                    "storeSettings": {
+                                        "type": "LakehouseWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "JsonWriteSettings"
+                                    },
+                                    "datasetSettings": {
+                                        "annotations": [],
+                                        "linkedService": {
+                                            "name": "lake_db",
+                                            "properties": {
+                                                "annotations": [],
+                                                "type": "Lakehouse",
+                                                "typeProperties": {
+                                                    "workspaceId": "34rfcewc4-34rf-j7uj7-84bd-6n6yujh67j65h56", #personal data scrubbed
+                                                    "artifactId": "1238o7ij-0687-2378nhna-8889-234sxa",  #personal data scrubbed
+                                                    "rootFolder": "Files"
+                                                }
+                                            }
+                                        },
+                                        "type": "Json",
+                                        "typeProperties": {
+                                            "location": {
+                                                "type": "LakehouseLocation",
+                                                "fileName": "job_count.json",
+                                                "folderPath": "jobs_counts"
+                                            }
+                                        },
+                                        "schema": {}
+                                    }
+                                },
+                                "enableStaging": false
+                            }
+                        },
+                        {
+                            "name": "get_total_new_jobs",
+                            "type": "RefreshDataflow",
+                            "dependsOn": [
+                                {
+                                    "activity": "get_no_of_pages",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "dataflowId": "123sxcjcsdoc-067jh-lklbn-a6bd-0945862oi3j", #personal data scrubbed
+                                "workspaceId": "9a7e0483-f099-234ocx-84bd-9824n9ux293", #personal data scrubbed
+                                "notifyOption": "NoNotification"
+                            }
+                        },
+                        {
+                            "name": "jobs_extracter",
+                            "type": "TridentNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "get_total_new_jobs",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "notebookId": "xm12xm8x3m-adba-4cf0-af01-2193u2x",  #personal data scrubbed
+                                "workspaceId": "21398u-f099-kjhdf-84bd-1230mx190e8",  #personal data scrubbed
+                                "parameters": {
+                                    "job_titles": {
+                                        "value": {
+                                            "value": "@item()",
+                                            "type": "Expression"
+                                        },
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "name": "tech_stack",
+                            "type": "TridentNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "jobs_extracter",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "notebookId": "120930-5dc7-43d2-a7a2-omumx12700k", #personal data scrubbed
+                                "workspaceId": "123x-f099-4633-84bd-0923nex79", #personal data scrubbed
+                                "parameters": {
+                                    "job_titles": {
+                                        "value": {
+                                            "value": "@item()",
+                                            "type": "Expression"
+                                        },
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "name": "experience_salary",
+                            "type": "TridentNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "jobs_extracter",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "notebookId": "123d12x-0e87-406c-x2e-udx0192nnxc98",  #personal data scrubbed
+                                "workspaceId": "dosnf8y-f099-c1x2-84bd-983nc09",  #personal data scrubbed
+                                "parameters": {
+                                    "job_titles": {
+                                        "value": {
+                                            "value": "@item()",
+                                            "type": "Expression"
+                                        },
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "variables": {
+            "job_titles": {
+                "type": "Array",
+                "defaultValue": [
+                    "data engineer",
+                    "data analyst",
+                    "business analyst",
+                    "data scientist",
+                    "ml engineer"
+                ]
+            }
+        },
+        "lastModifiedByObjectId": "x203i-7d0e-xj3je-bcbc-0m934c9c3y",  #personal data scrubbed
+        "lastPublishTime": "2024-07-14T17:46:42Z"
+    }
+}
