@@ -3,6 +3,8 @@
 ## Overview
 This project represents a comprehensive data engineering initiative leveraging Microsoft Fabric technologies. The primary goal is to automate the extraction, transformation, and reporting of job data sourced from websites like Naukri. Emphasizing sustainability and automation, this project showcases expertise in Microsoft Azure Fabric, particularly following the recent achievement of passing the DP-600 Microsoft Fabric Analytics Engineer Associate exam.
 
+![Pipeline Diagram](https://github.com/sridharstreaks/Job-Listings-Analytics---MS-fabric/blob/main/jobs_pipeline_snapshot_with_linkedin.png)
+
 ## Key Technologies Used
 - **Microsoft Azure Services**: Azure Data Factory, Azure Data Lake Gen2, Azure Databricks (Pyspark Notebooks)
 - **Other Tools**: Power BI for visualization, REST API for data retrieval
