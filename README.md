@@ -1,9 +1,14 @@
 # Job-Listings-Analytics---End-to-End Data Engineering Project MS-fabric
 
 ## Overview
-This project represents a comprehensive data engineering initiative leveraging Microsoft Fabric technologies. The primary goal is to automate the extraction, transformation, and reporting of job data sourced from websites like Naukri. Emphasizing sustainability and automation, this project showcases expertise in Microsoft Azure Fabric, particularly following the recent achievement of passing the DP-600 Microsoft Fabric Analytics Engineer Associate exam.
+This project represents a comprehensive data engineering initiative leveraging Microsoft Fabric technologies. The primary goal is to automate the extraction, transformation, and reporting of job data sourced from websites like Naukri and Linkedin. Emphasizing sustainability and automation, this project showcases expertise in Microsoft Azure Fabric, particularly following the recent achievement of passing the DP-600 Microsoft Fabric Analytics Engineer Associate exam.
 
 ![Pipeline Diagram](https://github.com/sridharstreaks/Job-Listings-Analytics---MS-fabric/blob/main/jobs_pipeline_snapshot_with_linkedin.png)
+
+## Job Portals scraped
+- **Linkedin**
+- **Naukri**
+- **Indeed** *(was previously open for scraping but now protected by Cloudflare)*
 
 ## Key Technologies Used
 - **Microsoft Azure Services**: Azure Data Factory, Azure Data Lake Gen2, Azure Databricks (Pyspark Notebooks)
@@ -16,6 +21,7 @@ The project aims to create a scalable and automated data pipeline that retrieves
 ## Project Architecture
 ### 1. Data Sourcing
 - **Source**: Job data is sourced from Naukri using a REST API call.
+- **Source**: Job data is sourced from Linkedin using Pyspark Notebook. Since, Linkedin does output HTML instead of JSON
 - **Flexibility**: Users can specify job profiles of interest via configurable parameters.
 - **Data Storage**: JSON responses from the API are stored in Azure Data Lake Gen2, adhering to a lakehouse architecture for structured and unstructured data.
 
